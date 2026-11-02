@@ -73,40 +73,32 @@ const API_URL = "https://viraloutliers.com/api/v1/trending";
 let posts = [];
 const $ = id => document.getElementById(id);
 
-function getArray(data){
-  if(Array.isArray(data)) return data;
-  for(const key of ["posts","videos","results","items","data","trending"]){
-    if(Array.isArray(data?.[key])) return data[key];
-  }
-  if(data && typeof data === "object"){
-    for(const value of Object.values(data)){
-      if(Array.isArray(value)) return value;
-    }
-  }
-  return [];
+function getArray(data) {
+  return Array.isArray(data?.outliers) ? data.outliers : [];
+
 }
 function firstValue(obj, keys){
   for(const key of keys){ if(obj?.[key] !== undefined && obj?.[key] !== null && obj[key] !== "") return obj[key]; }
   return "";
 }
-function normalize(raw){
-  const url = String(firstValue(raw,["url","post_url","video_url","tiktok_url","instagram_url","permalink","share_url"]));
-  const platformRaw = String(firstValue(raw,["platform","source","network"])).toLowerCase();
-  const haystack = (url+" "+platformRaw).toLowerCase();
-  let platform = "";
-  if(haystack.includes("tiktok")) platform="TikTok";
-  else if(haystack.includes("instagram")) platform="Instagram";
-  else if(haystack.includes("facebook") || haystack.includes("fb.watch")) platform="Facebook";
-  else if(haystack.includes("youtube") || haystack.includes("youtu.be")) return null;
-  if(!platform) return null;
-  const author = firstValue(raw,["author_username","username","handle","author","creator_username","owner_username"]);
-  const title = firstValue(raw,["title","description","caption","text","video_description"]) || "Videoclip public în tendințe";
-  const date = firstValue(raw,["posted_at","created_at","published_at","create_time","timestamp"]);
-  const views = firstValue(raw,["view_count","views","play_count"]);
-  const likes = firstValue(raw,["like_count","likes"]);
-  const score = firstValue(raw,["virality_score","outlier_score","score"]);
-  const country = firstValue(raw,["country","region","country_name"]);
-  return {platform,url,author:String(author||"Autor nespecificat").replace(/^@/,""),title:String(title),date,views,likes,score,country,raw};
+function normalize(raw) {
+  const platform = String(raw.platform || "").toLowerCase();
+
+  if (!["tiktok", "instagram"].includes(platform)) return null;
+  if (!raw.postLink) return null;
+
+  return {
+    platform: platform === "tiktok" ? "TikTok" : "Instagram",
+    url: raw.postLink,
+    author: raw.handle || "Autor nespecificat",
+    title: raw.title || "Videoclip fără descriere",
+    date: raw.createdAt || raw.postedAt || "",
+    views: raw.views || 0,
+    likes: raw.likes || 0,
+    score: raw.outlierScore || "",
+    country: raw.country || "",
+    thumbnail: raw.thumbnail || ""
+  };
 }
 function ageHours(value){
   if(!value) return null;

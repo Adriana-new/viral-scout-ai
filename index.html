@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#142c43">
+<title>Viral Scout AI</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#172433;background:#f3f6f8}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:900px;margin:auto;padding:18px}
+header{background:linear-gradient(120deg,#142c43,#1b5260);color:white;padding:24px;border-radius:18px}
+.kicker{font-size:11px;letter-spacing:2px;color:#b7dce5}.brand{font-size:30px;font-weight:800;margin:7px 0}.sub{color:#d3e6eb;font-size:14px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.pill{font-size:12px;border:1px solid #b7cbd4;border-radius:99px;padding:5px 10px}
+.stats,.filters,.notice,.clip{background:white;border:1px solid #e0e7ec;border-radius:14px;padding:15px;margin-top:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat strong{display:block;font-size:23px}.muted{color:#697985;font-size:13px}
+label{display:block;font-size:13px;font-weight:650;margin:12px 0 6px}
+input,select{width:100%;padding:11px;border:1px solid #cfd9df;border-radius:9px;background:white;font:inherit;color:#172433}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.categories{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+button{border:1px solid #cfd9df;background:white;border-radius:9px;padding:9px 11px;font:inherit;cursor:pointer}
+button.active{background:#e4f3f5;border-color:#348b98;color:#15535c}
+.results-head{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 8px;gap:8px}
+.clip h3{font-size:16px;margin:0}.clip p{font-size:13px;line-height:1.45;color:#4e606d}.cliptop{display:flex;justify-content:space-between;gap:10px}.score{font-weight:800;color:#167b6a;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;border-radius:20px;background:#edf2f5;padding:4px 8px;margin:2px}
+.warning{background:#fff8e8;border-color:#f0dfb7;color:#604b20;font-size:13px;line-height:1.5}
+footer{font-size:12px;color:#71808b;padding:18px 3px}
+@media(max-width:540px){.wrap{padding:12px}.grid{grid-template-columns:1fr}.brand{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="kicker">SOCIALCOASTER · CREATOR DISCOVERY</div>
+ <div class="brand">🔎 Viral Scout AI</div>
+ <div class="sub">Descoperă întâmplări cu potențial de știre și verifică sursa originală.</div>
+ <div class="pills"><span class="pill">TikTok</span><span class="pill">Instagram</span><span class="pill">Facebook</span></div>
+</header>
+<section class="stats">
+ <div class="stat"><strong>3</strong><span class="muted">Platforme vizate</span></div>
+ <div class="stat"><strong>24/7</strong><span class="muted">Obiectiv de monitorizare</span></div>
+ <div class="stat"><strong>AI</strong><span class="muted">Prioritizare</span></div>
+</section>
+<section class="filters">
+ <h2 style="font-size:18px;margin:0">Caută videoclipuri</h2>
+ <label for="q">Cuvinte-cheie</label><input id="q" placeholder="Ex.: tornado, rescue, robot, reunion">
+ <div class="grid">
+  <div><label for="platform">Platformă</label><select id="platform"><option value="all">Toate platformele</option><option>TikTok</option><option>Instagram</option><option>Facebook</option></select></div>
+  <div><label for="age">Publicat în</label><select id="age"><option value="9999">Orice perioadă</option><option value="1">Ultima oră</option><option value="6">Ultimele 6 ore</option><option value="12">Ultimele 12 ore</option><option value="24">Ultimele 24 ore</option></select></div>
+ </div>
+ <label>Categorii</label>
+ <div class="categories" id="cats">
+  <button class="active" data-cat="all">Toate</button><button data-cat="Dezastre">🌪️ Dezastre</button><button data-cat="Salvări">🚨 Salvări</button><button data-cat="Emoții">🥹 Emoții</button><button data-cat="Tehnologie">🤖 Tehnologie</button><button data-cat="Animale">🐾 Animale</button><button data-cat="Oameni">👨‍👩‍👧 Oameni</button>
+ </div>
+</section>
+<div class="results-head"><strong>Exemple de rezultate</strong><span class="muted">Mod demonstrație</span></div>
+<div id="results"></div>
+<div id="empty" class="notice" hidden>Nu există rezultate pentru filtrele selectate.</div>
+<div class="notice warning"><strong>Important:</strong> Aceasta este o versiune demonstrativă. Rezultatele afișate sunt fictive, nu videoclipuri reale. Pentru căutare live și monitorizare automată sunt necesare surse/API-uri autorizate; accesul la date diferă între TikTok, Instagram și Facebook. Scorul viral nu confirmă autenticitatea sau drepturile de utilizare.</div>
+<footer>Viral Scout AI · Prototip independent · Nu este afiliat oficial cu TikTok, Instagram sau Facebook.</footer>
+</div>
+<script>
+const samples=[
+ {title:"Furtună puternică surprinsă de localnici",platform:"TikTok",hours:2,cat:"Dezastre",score:92,desc:"Posibil subiect meteo. Trebuie confirmate locul, data și sursa."},
+ {title:"Robot surprins într-o demonstrație neașteptată",platform:"Instagram",hours:5,cat:"Tehnologie",score:87,desc:"Subiect tehnologic cu potențial de distribuire."},
+ {title:"Salvarea unui animal într-o situație dificilă",platform:"Facebook",hours:8,cat:"Animale",score:89,desc:"Poveste emoțională. Contextul și autorul trebuie verificați."},
+ {title:"Reuniune emoționantă după mulți ani",platform:"TikTok",hours:11,cat:"Emoții",score:90,desc:"Poveste umană cu potențial de interes public."},
+ {title:"Intervenție de salvare filmată de martori",platform:"Instagram",hours:18,cat:"Salvări",score:95,desc:"Eveniment care necesită verificare independentă."},
+ {title:"Moment surprinzător la un concurs pentru copii",platform:"Facebook",hours:23,cat:"Oameni",score:82,desc:"Moment neobișnuit; verificați acordurile și contextul."}
+];
+let category="all";
+const $=id=>document.getElementById(id);
+function render(){
+ const query=$("q").value.trim().toLowerCase(),platform=$("platform").value,max=Number($("age").value);
+ const found=samples.filter(x=>(category==="all"||x.cat===category)&&(platform==="all"||x.platform===platform)&&x.hours<=max&&(x.title+" "+x.desc+" "+x.cat).toLowerCase().includes(query));
+ $("results").innerHTML="";
+ found.forEach(x=>{
+  const card=document.createElement("article");card.className="clip";
+  const top=document.createElement("div");top.className="cliptop";
+  const h=document.createElement("h3");h.textContent=x.title;
+  const score=document.createElement("span");score.className="score";score.textContent=x.score+"/100";
+  top.append(h,score);
+  const meta=document.createElement("div");meta.className="muted";meta.textContent=`Exemplu · ${x.platform} · ${x.hours} ore`;
+  const p=document.createElement("p");p.textContent=x.desc;
+  const tags=document.createElement("div");tags.innerHTML=`<span class="tag">${x.cat}</span><span class="tag">Sursă neverificată</span>`;
+  card.append(top,meta,p,tags);$("results").append(card);
+ });
+ $("empty").hidden=found.length!==0;
+}
+document.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{
+ category=b.dataset.cat;document.querySelectorAll("[data-cat]").forEach(x=>x.classList.toggle("active",x===b));render();
+}));
+["q","platform","age"].forEach(id=>$(id).addEventListener("input",render));
+render();
+</script>
+</body>
+</html>
